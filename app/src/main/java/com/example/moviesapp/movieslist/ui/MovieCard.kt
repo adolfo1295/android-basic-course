@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,13 +19,16 @@ import androidx.compose.ui.unit.sp
 import com.example.moviesapp.R
 import com.example.moviesapp.movieslist.ui.model.MovieModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieCard(
-    movie: MovieModel
+    movie: MovieModel,
+    onMovieClick: ()-> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(8.dp),
+        onClick = onMovieClick
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -49,5 +53,8 @@ fun MovieCard(
 @Composable
 @Preview
 fun MovieCardPreview() {
-    MovieCard(MovieModel("Hola mundo"))
+    MovieCard(
+        movie = MovieModel("Hola mundo"),
+        onMovieClick = {}
+    )
 }

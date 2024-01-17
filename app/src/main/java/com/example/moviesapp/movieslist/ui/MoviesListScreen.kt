@@ -9,8 +9,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.moviesapp.movieslist.ui.model.MovieModel
 
+
 @Composable
-fun MoviesListScreen() {
+fun MoviesListRoute(
+    onMovieClick: () -> Unit
+) {
+    MoviesListScreen(
+        onMovieClick = onMovieClick
+    )
+}
+
+@Composable
+fun MoviesListScreen(
+    onMovieClick: () -> Unit
+) {
 
     val movies = listOf(
         MovieModel("Harry Potter"),
@@ -26,7 +38,9 @@ fun MoviesListScreen() {
         items(
             movies
         ) {
-            MovieCard(it)
+            MovieCard(it) {
+                onMovieClick()
+            }
         }
     }
 }
@@ -34,6 +48,8 @@ fun MoviesListScreen() {
 @Composable
 @Preview
 fun MoviesListScreenPreview() {
-    MoviesListScreen()
+    MoviesListScreen(
+        onMovieClick = {}
+    )
 }
 
