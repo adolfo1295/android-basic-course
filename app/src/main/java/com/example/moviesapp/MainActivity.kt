@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon
@@ -25,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.moviesapp.favorites.FavoritesRoute
 import com.example.moviesapp.ui.navigation.MoviesNavHost
 import com.example.moviesapp.ui.theme.MoviesAppTheme
 
@@ -58,16 +58,15 @@ class MainActivity : ComponentActivity() {
                     ) {
                         TabRow(selectedTabIndex = selectedTabIndex) {
                             tabItems.forEachIndexed { index, tabItem ->
-                                Tab(selected = index == selectedTabIndex
-                                    , onClick = {
-                                        selectedTabIndex = index
+                                Tab(selected = index == selectedTabIndex, onClick = {
+                                    selectedTabIndex = index
                                 },
                                     text = {
                                         Text(text = tabItem.title)
                                     },
                                     icon = {
                                         Icon(
-                                            imageVector = if(index == selectedTabIndex)
+                                            imageVector = if (index == selectedTabIndex)
                                                 tabItem.selectedIcon else tabItem.unselectedIcon,
                                             contentDescription = tabItem.title
                                         )
@@ -75,9 +74,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }
-                        when(selectedTabIndex){
+                        when (selectedTabIndex) {
                             0 -> MoviesNavHost()
-                            1 -> Text(text = "FAVORITES")
+                            1 -> FavoritesRoute()
                         }
                     }
                 }

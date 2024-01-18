@@ -9,7 +9,7 @@ import com.example.moviesapp.movieslist.ui.navigation.MOVIES_LIST_ROUTE
 import com.example.moviesapp.movieslist.ui.navigation.moviesListScreen
 
 @Composable
-fun MoviesNavHost(){
+fun MoviesNavHost() {
     val navController = rememberNavController()
 
     NavHost(

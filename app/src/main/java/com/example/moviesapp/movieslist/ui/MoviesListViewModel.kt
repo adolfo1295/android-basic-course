@@ -37,6 +37,24 @@ class MoviesListViewModel(
         }
     }
 
+    fun onFavoriteMovieClick(movieModel: MovieModel) {
+
+        _moviesListUiState.update { moviesUiState ->
+            val auxList = moviesUiState.moviesList.toList()
+            auxList.find {
+                it == movieModel
+            }?.let {
+                it.isFavorite = !it.isFavorite
+            }
+
+            moviesUiState.copy (
+                moviesList = auxList,
+                //isLoading = !moviesUiState.isLoading
+            )
+        }
+        //TODO do the repo call to save the movie into favorites DB
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
