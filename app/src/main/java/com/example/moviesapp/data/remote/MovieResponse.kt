@@ -1,4 +1,4 @@
-package com.example.moviesapp.movieslist.data.remote
+package com.example.moviesapp.data.remote
 
 import com.squareup.moshi.Json
 
