@@ -7,11 +7,13 @@ import com.example.moviesapp.movieslist.ui.MoviesListRoute
 const val MOVIES_LIST_ROUTE = "movies_list_route"
 
 fun NavGraphBuilder.moviesListScreen(
-    onMovieClick: () -> Unit
+    onMovieClick: (String) -> Unit
 ) {
     composable(route = MOVIES_LIST_ROUTE) {
         MoviesListRoute(
-            onMovieClick
+            onMovieClick = { movieId ->
+                onMovieClick(movieId)
+            }
         )
     }
 }

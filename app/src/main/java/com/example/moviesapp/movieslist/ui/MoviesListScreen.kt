@@ -1,6 +1,5 @@
 package com.example.moviesapp.movieslist.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -11,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moviesapp.movieslist.ui.model.MovieModel
+import com.example.moviesapp.models.MovieModel
 
 @Composable
 fun MoviesListRoute(
-    onMovieClick: () -> Unit,
+    onMovieClick: (String) -> Unit,
     viewModel: MoviesListViewModel = viewModel(
         factory = MoviesListViewModel.Factory
     )
@@ -33,7 +32,7 @@ fun MoviesListRoute(
 @Composable
 fun MoviesListScreen(
     moviesUiState: MoviesUiState,
-    onMovieClick: () -> Unit,
+    onMovieClick: (String) -> Unit,
     onFavoriteClick: (movie: MovieModel) -> Unit
 ) {
     LazyVerticalGrid(
@@ -43,7 +42,9 @@ fun MoviesListScreen(
         items(moviesUiState.moviesList) {
             MovieCard(
                 movie = it,
-                onMovieClick = onMovieClick,
+                onMovieClick = {
+                    onMovieClick(it.id)
+                },
                 onFavoriteClick = onFavoriteClick
             )
         }

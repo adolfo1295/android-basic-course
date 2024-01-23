@@ -1,7 +1,7 @@
 package com.example.moviesapp.favorites
 
 import androidx.lifecycle.ViewModel
-import com.example.moviesapp.movieslist.ui.model.MovieModel
+import com.example.moviesapp.models.MovieModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,17 +23,20 @@ class FavoriteMoviesViewModel : ViewModel() {
             it.copy(
                 moviesList = listOf(
                     MovieModel(
-                        "Hola mundo",
-                        ""
+                        id = "1",
+                        title = "hola 1",
+                        imageUrl = "",
                     ),
                     MovieModel(
-                        "Hola mundo 2",
-                        ""
+                        id = "2",
+                        title = "hola 2",
+                        imageUrl = "",
                     ),
                     MovieModel(
-                        "Hola mundo 3",
-                        ""
-                    )
+                        id = "3",
+                        title = "hola 3",
+                        imageUrl = "",
+                    ),
                 )
             )
         }

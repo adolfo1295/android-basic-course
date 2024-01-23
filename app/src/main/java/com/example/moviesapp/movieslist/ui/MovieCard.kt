@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.moviesapp.movieslist.ui.model.MovieModel
+import com.example.moviesapp.models.MovieModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +85,7 @@ fun MovieCard(
 @Preview
 fun MovieCardPreview() {
     MovieCard(
-        movie = MovieModel("Hola mundo", ""),
+        movie = MovieModel("Hola mundo", "",""),
         onMovieClick = {},
         onFavoriteClick = {}
     )
