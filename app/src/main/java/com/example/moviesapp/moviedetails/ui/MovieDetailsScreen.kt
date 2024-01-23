@@ -1,47 +1,48 @@
 package com.example.moviesapp.moviedetails.ui
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.moviesapp.data.remote.MovieDbApi
+import com.example.moviesapp.moviedetails.ui.components.MovieDetailsHeader
 
 @Composable
 fun MovieDetailsRoute(
   movieId: String,
   onPopUp: () -> Unit,
-  viewModel: MovieDetailsViewModel = viewModel(
+) {
+  val viewModel: MovieDetailsViewModel = viewModel(
     factory = MovieDetailsViewModel.Factory
   )
-) {
-    viewModel.getMovieDetails(movieId = movieId)
+  Log.d("fofito", "MovieDetailsRoute: ")
+  viewModel.getMovieDetails(movieId = movieId)
   val movieDetailsUiState by viewModel.movieDetailsUiState.collectAsStateWithLifecycle()
   MovieDetailsScreen(
     movieDetailsUiState = movieDetailsUiState,
@@ -54,20 +55,75 @@ fun MovieDetailsScreen(
   onPopUp: () -> Unit,
   movieDetailsUiState: MovieDetailsUiState
 ) {
-  Box(
-    modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.TopCenter,
-  ) {
-    AsyncImage(
-      modifier = Modifier.fillMaxHeight(0.6f),
-      model = ImageRequest.Builder(LocalContext.current)
-        .data(MovieDbApi.IMAGE_URL + movieDetailsUiState.movie?.backdropPath.orEmpty())
-        .crossfade(true)
-        .build(),
-      contentDescription = "image",
-      contentScale = ContentScale.Crop,
-    )
+
+  Log.d("fofimac", "MovieDetailsScreen: ${movieDetailsUiState.isLoading}")
+
+  if (movieDetailsUiState.isLoading) {
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.surface)
+    ) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.align(Alignment.Center)
+      )
+    }
+  } else {
+    movieDetailsUiState.movie?.let {
+      Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
+      ) {
+        AsyncImage(
+          model = MovieDbApi.IMAGE_URL + movieDetailsUiState.movie.backdropPath,
+          contentDescription = "image",
+          contentScale = ContentScale.Crop,
+          modifier = Modifier
+            .fillMaxHeight(0.7f)
+            .drawWithCache {
+              onDrawWithContent {
+                drawContent()
+                drawRect(
+                  Brush.verticalGradient(
+                    0.5f to Color.White.copy(alpha = 0F),
+                    1F to Color.White
+                  )
+                )
+              }
+            },
+        )
+        Box(
+          modifier = Modifier
+            .padding(horizontal = 10.dp)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)
+            .align(Alignment.BottomCenter),
+        ) {
+          Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+          ) {
+            MovieDetailsHeader(movieDetailModel = movieDetailsUiState.movie)
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+              text = "Descripcion",
+              style = MaterialTheme.typography.titleLarge,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              fontWeight = FontWeight.Bold,
+              modifier = Modifier.padding(horizontal = 10.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+              text = movieDetailsUiState.movie.overview,
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.padding(horizontal = 10.dp)
+            )
+          }
+        }
+      }
+    }
   }
 }
-
-//https://dribbble.com/shots/4432184-Daily-UI-7-7-Movie-App-UI/attachments/10389850?mode=media

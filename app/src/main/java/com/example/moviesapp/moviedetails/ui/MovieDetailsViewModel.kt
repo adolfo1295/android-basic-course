@@ -1,5 +1,6 @@
 package com.example.moviesapp.moviedetails.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,51 +17,46 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
-    private val moviesRepository: MoviesRepository
+  private val moviesRepository: MoviesRepository
 ) : ViewModel() {
 
-    private val _movieDetailsUiState = MutableStateFlow(MovieDetailsUiState())
-    val movieDetailsUiState: StateFlow<MovieDetailsUiState> = _movieDetailsUiState.asStateFlow()
+  private val _movieDetailsUiState = MutableStateFlow(MovieDetailsUiState())
+  val movieDetailsUiState: StateFlow<MovieDetailsUiState> = _movieDetailsUiState.asStateFlow()
 
-    fun getMovieDetails(movieId: String) {
-        _movieDetailsUiState.update {
+  fun getMovieDetails(movieId: String) {
+    Log.d("fofito", "getMovieDetails: ")
+    viewModelScope.launch {
+      try {
+        val movieDetail = moviesRepository.getMovieDetail(movieId = movieId)
+        movieDetail.let { movie ->
+          _movieDetailsUiState.update {
             it.copy(
-                movie = null,
-                isLoading = true
+              movie = movie.toMovieDetailModel(),
+              isLoading = false
             )
+          }
         }
-        viewModelScope.launch {
-            try {
-                val movieDetail = moviesRepository.getMovieDetail(movieId = movieId)
-                movieDetail.let { movie ->
-                    _movieDetailsUiState.update {
-                        it.copy(
-                            movie = movie.toMovieDetailModel(),
-                            isLoading = false
-                        )
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+      } catch (e: Exception) {
+        e.printStackTrace()
+      }
     }
+  }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MovieDetailsViewModel(
-                    MoviesRepository(
-                        movieDbApi = RetrofitClient.service
-                    )
-                )
-            }
-        }
+  companion object {
+    val Factory: ViewModelProvider.Factory = viewModelFactory {
+      initializer {
+        MovieDetailsViewModel(
+          MoviesRepository(
+            movieDbApi = RetrofitClient.service
+          )
+        )
+      }
     }
+  }
 
 }
 
 data class MovieDetailsUiState(
-    val isLoading: Boolean = false,
-    val movie: MovieDetailModel? = null,
+  val isLoading: Boolean = true,
+  val movie: MovieDetailModel? = null,
 )
