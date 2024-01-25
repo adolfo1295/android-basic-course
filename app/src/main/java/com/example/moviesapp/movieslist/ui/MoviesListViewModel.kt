@@ -26,14 +26,23 @@ class MoviesListViewModel(
         getMovies()
     }
 
-    private fun getMovies() {
+    fun getMovies() {
         viewModelScope.launch {
-            val movies = moviesRepository.getMovies()
-            _moviesListUiState.update { moviesUiState ->
-                moviesUiState.copy(
-                    moviesList = movies.toMoviesModel(),
-                    isLoading = false
-                )
+            try {
+                val movies = moviesRepository.getMovies()
+                _moviesListUiState.update { moviesUiState ->
+                    moviesUiState.copy(
+                        moviesList = movies.toMoviesModel(),
+                        isLoading = false,
+                        showErrorMessage = false
+                    )
+                }
+            } catch (e: Exception) {
+                _moviesListUiState.update {
+                    it.copy(
+                        showErrorMessage = true
+                    )
+                }
             }
         }
     }
@@ -72,4 +81,5 @@ class MoviesListViewModel(
 data class MoviesUiState(
     val moviesList: List<MovieModel> = emptyList(),
     val isLoading: Boolean = false,
+    val showErrorMessage: Boolean = false
 )

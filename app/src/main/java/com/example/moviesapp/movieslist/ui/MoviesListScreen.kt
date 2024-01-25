@@ -1,13 +1,19 @@
 package com.example.moviesapp.movieslist.ui
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moviesapp.models.MovieModel
@@ -25,7 +31,8 @@ fun MoviesListRoute(
     MoviesListScreen(
         moviesUiState = moviesUiState,
         onMovieClick = onMovieClick,
-        onFavoriteClick = viewModel::onFavoriteMovieClick
+        onFavoriteClick = viewModel::onFavoriteMovieClick,
+        onRefreshClick = viewModel::getMovies
     )
 }
 
@@ -33,20 +40,40 @@ fun MoviesListRoute(
 fun MoviesListScreen(
     moviesUiState: MoviesUiState,
     onMovieClick: (String) -> Unit,
-    onFavoriteClick: (movie: MovieModel) -> Unit
+    onFavoriteClick: (movie: MovieModel) -> Unit,
+    onRefreshClick: () -> Unit
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        items(moviesUiState.moviesList) {
-            MovieCard(
-                movie = it,
-                onMovieClick = {
-                    onMovieClick(it.id)
-                },
-                onFavoriteClick = onFavoriteClick
-            )
+
+    when {
+        moviesUiState.isLoading -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+        }
+        moviesUiState.showErrorMessage -> {
+            MovieError {
+                onRefreshClick()
+            }
+        }
+        else -> LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            items(moviesUiState.moviesList) {
+                MovieCard(
+                    movie = it,
+                    onMovieClick = {
+                        onMovieClick(it.id)
+                    },
+                    onFavoriteClick = onFavoriteClick
+                )
+            }
         }
     }
 }
@@ -57,7 +84,8 @@ fun MoviesListScreenPreview() {
     MoviesListScreen(
         MoviesUiState(),
         onMovieClick = {},
-        onFavoriteClick = {}
+        onFavoriteClick = {},
+        onRefreshClick = {}
     )
 }
 
