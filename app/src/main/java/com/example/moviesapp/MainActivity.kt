@@ -3,98 +3,108 @@ package com.example.moviesapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.moviesapp.favorites.FavoritesRoute
-import com.example.moviesapp.ui.navigation.MoviesNavHost
-import com.example.moviesapp.ui.theme.MoviesAppTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.moviesapp.navigation.Screens
+import com.example.moviesapp.theme.theme.MoviesAppTheme
+import com.example.moviesapp.ui.bottombar.BottomBar
+import com.example.moviesapp.ui.favorites.FavoritesNavHost
+import com.example.moviesapp.ui.home.HomeNavHost
+import com.example.moviesapp.ui.nowplaying.NowPlayingNavHost
+
+data class BottomNavigationItem(
+  val title: String,
+  val selectedIcon: ImageVector,
+  val unselectedIcon: ImageVector,
+  val route: String = "",
+)
+
+val itemsList = listOf(
+  BottomNavigationItem(
+    title = "Home",
+    selectedIcon = Icons.Filled.Home,
+    unselectedIcon = Icons.Outlined.Home,
+    route = Screens.Home.route
+  ),
+  BottomNavigationItem(
+    title = "Favorites",
+    selectedIcon = Icons.Filled.Favorite,
+    unselectedIcon = Icons.Outlined.Favorite,
+    route = Screens.Favorites.route
+  ),
+  BottomNavigationItem(
+    title = "Now playing",
+    selectedIcon = Icons.Filled.Star,
+    unselectedIcon = Icons.Outlined.Star,
+    route = Screens.NowPlaying.route
+  ),
+)
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val tabItems = listOf(
-            TabItem(
-                title = "Home",
-                unselectedIcon = Icons.Outlined.Home,
-                selectedIcon = Icons.Filled.Home
-            ),
-            TabItem(
-                title = "Favorite",
-                unselectedIcon = Icons.Outlined.FavoriteBorder,
-                selectedIcon = Icons.Filled.Favorite
-            )
-        )
-        setContent {
-            MoviesAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    var selectedTabIndex by remember {
-                        mutableIntStateOf(0)
-                    }
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        TabRow(selectedTabIndex = selectedTabIndex) {
-                            tabItems.forEachIndexed { index, tabItem ->
-                                Tab(selected = index == selectedTabIndex, onClick = {
-                                    selectedTabIndex = index
-                                },
-                                    text = {
-                                        Text(text = tabItem.title)
-                                    },
-                                    icon = {
-                                        Icon(
-                                            imageVector = if (index == selectedTabIndex)
-                                                tabItem.selectedIcon else tabItem.unselectedIcon,
-                                            contentDescription = tabItem.title
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                        when (selectedTabIndex) {
-                            0 -> MoviesNavHost()
-                            1 -> FavoritesRoute()
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+  @OptIn(ExperimentalMaterial3Api::class)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-data class TabItem(
-    val title: String,
-    val unselectedIcon: ImageVector,
-    val selectedIcon: ImageVector
-)
+    setContent {
+      MoviesAppTheme {
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+        Scaffold(
+          bottomBar = {
+            BottomBar(
+              navController = navController,
+              itemsList = itemsList,
+              navBackStackEntry = navBackStackEntry,
+            )
+          }
+        ) { paddingValues ->
+          NavHost(
+            navController = navController,
+            startDestination = Screens.Home.route,
+            modifier = Modifier.padding(paddingValues = paddingValues)
+          ) {
+            composable(Screens.Home.route) {
+              Box(modifier = Modifier.fillMaxSize()) {
+                HomeNavHost()
+              }
+            }
+            composable(Screens.Favorites.route) {
+              FavoritesNavHost()
+            }
+            composable(Screens.NowPlaying.route) {
+              NowPlayingNavHost()
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    MoviesAppTheme {
+  MoviesAppTheme {
 
-    }
+  }
 }

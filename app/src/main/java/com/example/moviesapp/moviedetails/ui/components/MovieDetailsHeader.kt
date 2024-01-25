@@ -41,7 +41,7 @@ fun MovieDetailsHeader(movieDetailModel: MovieDetailModel) {
         .size(100.dp)
         .clip(CircleShape),
       filterQuality = FilterQuality.High,
-      model = MovieDbApi.IMAGE_URL + movieDetailModel.posterPath,
+      model = MovieDbApi.IMAGE_URL_THUMBNAIL + movieDetailModel.posterPath,
       contentDescription = "image",
       contentScale = ContentScale.Crop,
     )

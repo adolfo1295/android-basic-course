@@ -23,7 +23,8 @@ interface MovieDbApi {
     ): MovieDetailResponse
 
     companion object {
-        const val IMAGE_URL = "https://image.tmdb.org/t/p/w500/"
+        const val IMAGE_URL_THUMBNAIL = "https://image.tmdb.org/t/p/w500/"
+        const val IMAGE_URL_BACKDROP = "https://image.tmdb.org/t/p/original/"
     }
 
 }
