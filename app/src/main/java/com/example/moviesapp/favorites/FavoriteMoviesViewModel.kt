@@ -1,50 +1,61 @@
 package com.example.moviesapp.favorites
 
 import androidx.lifecycle.ViewModel
-import com.example.moviesapp.models.MovieModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.moviesapp.MoviesApp
+import com.example.moviesapp.data.remote.RetrofitClient
+import com.example.moviesapp.data.repositories.MoviesRepository
+import com.example.moviesapp.models.detail.MovieDetailModel
+import com.example.moviesapp.models.toMovieDetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class FavoriteMoviesViewModel : ViewModel() {
+class FavoriteMoviesViewModel(
+  private val moviesRepository: MoviesRepository
+) : ViewModel() {
 
-    private val _favoritesMoviesUiState = MutableStateFlow(FavoriteMoviesUiState())
-    val favoritesMoviesUiState: StateFlow<FavoriteMoviesUiState> =
-        _favoritesMoviesUiState.asStateFlow()
+  private var _favoritesMovieUiState = MutableStateFlow(FavoriteMoviesUiState())
+  val favoriteMoviesUiState: StateFlow<FavoriteMoviesUiState> = _favoritesMovieUiState.asStateFlow()
 
-    init {
-        getFavoriteMovies()
-    }
+  init {
+    getFavoriteMovies()
+  }
 
-    fun getFavoriteMovies() {
-        //TODO ADD REPO IMPLEMENTATION WITH FAV DATA
-        _favoritesMoviesUiState.update {
-            it.copy(
-                moviesList = listOf(
-                    MovieModel(
-                        id = "1",
-                        title = "hola 1",
-                        imageUrl = "",
-                    ),
-                    MovieModel(
-                        id = "2",
-                        title = "hola 2",
-                        imageUrl = "",
-                    ),
-                    MovieModel(
-                        id = "3",
-                        title = "hola 3",
-                        imageUrl = "",
-                    ),
-                )
-            )
+
+  private fun getFavoriteMovies() {
+    viewModelScope.launch {
+      moviesRepository.getFavoriteMovies().collectLatest { favoriteMovies ->
+        _favoritesMovieUiState.update {
+          it.copy(favoriteMovies = favoriteMovies.map { movieEntity ->
+            movieEntity.toMovieDetail()
+          })
         }
+      }
     }
+  }
 
+  companion object {
+    val Factory: ViewModelProvider.Factory = viewModelFactory {
+      initializer {
+        FavoriteMoviesViewModel(
+          MoviesRepository(
+            movieDbApi = RetrofitClient.service,
+            dao = MoviesApp.database.movieDao()
+          )
+        )
+      }
+    }
+  }
 }
 
 data class FavoriteMoviesUiState(
-    val isLoading: Boolean = false,
-    val moviesList: List<MovieModel> = emptyList()
+  val isLoading: Boolean = false,
+  val favoriteMovies: List<MovieDetailModel> = emptyList()
 )

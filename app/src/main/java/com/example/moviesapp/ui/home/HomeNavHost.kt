@@ -6,9 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.moviesapp.moviedetails.ui.MovieDetailsRoute
 import com.example.moviesapp.movieslist.ui.MoviesListRoute
 import com.example.moviesapp.navigation.Screens
+import com.example.moviesapp.ui.detail.MovieDetailsRoute
 
 @Composable
 fun HomeNavHost() {
@@ -27,6 +27,7 @@ fun HomeNavHost() {
 
       val movieId = it.arguments?.getString("movieId")
       MovieDetailsRoute(movieId = movieId.orEmpty(), onPopUp = {
+        navController.popBackStack()
       })
     }
   }

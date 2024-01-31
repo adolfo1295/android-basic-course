@@ -1,11 +1,12 @@
-package com.example.moviesapp.moviedetails.ui
+package com.example.moviesapp.ui.detail
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.moviesapp.MoviesApp
+import com.example.moviesapp.data.local.entities.MovieEntity
 import com.example.moviesapp.data.remote.RetrofitClient
 import com.example.moviesapp.data.repositories.MoviesRepository
 import com.example.moviesapp.models.detail.MovieDetailModel
@@ -23,8 +24,19 @@ class MovieDetailsViewModel(
   private val _movieDetailsUiState = MutableStateFlow(MovieDetailsUiState())
   val movieDetailsUiState: StateFlow<MovieDetailsUiState> = _movieDetailsUiState.asStateFlow()
 
+  init {
+    viewModelScope.launch {
+      moviesRepository.getFavoriteMovies().collect { favoriteMovies ->
+        _movieDetailsUiState.update {
+          it.copy(
+            favoriteMovies = favoriteMovies
+          )
+        }
+      }
+    }
+  }
+
   fun getMovieDetails(movieId: String) {
-    Log.d("fofito", "getMovieDetails: ")
     viewModelScope.launch {
       try {
         val movieDetail = moviesRepository.getMovieDetail(movieId = movieId)
@@ -32,7 +44,7 @@ class MovieDetailsViewModel(
           _movieDetailsUiState.update {
             it.copy(
               movie = movie.toMovieDetailModel(),
-              isLoading = false
+              isLoading = false,
             )
           }
         }
@@ -42,21 +54,32 @@ class MovieDetailsViewModel(
     }
   }
 
+  fun updateFavorites(movieDetailModel: MovieDetailModel, isMovieFavorite: Boolean) {
+    viewModelScope.launch {
+      if (isMovieFavorite) {
+        moviesRepository.removeMovieFromFavorites(movieModel = movieDetailModel)
+      } else {
+        moviesRepository.insertMovieToFavorites(movieModel = movieDetailModel)
+      }
+    }
+  }
+
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {
         MovieDetailsViewModel(
           MoviesRepository(
-            movieDbApi = RetrofitClient.service
+            movieDbApi = RetrofitClient.service,
+            dao = MoviesApp.database.movieDao()
           )
         )
       }
     }
   }
-
 }
 
 data class MovieDetailsUiState(
   val isLoading: Boolean = true,
   val movie: MovieDetailModel? = null,
+  val favoriteMovies: List<MovieEntity> = emptyList()
 )

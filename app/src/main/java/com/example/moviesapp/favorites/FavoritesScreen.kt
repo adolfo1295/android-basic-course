@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,57 +27,67 @@ import com.example.moviesapp.movieslist.ui.MovieCard
 
 
 @Composable
-fun FavoritesRoute(
-    viewModel: FavoriteMoviesViewModel = viewModel()
-) {
-    val favoriteMoviesUiState = viewModel.favoritesMoviesUiState.collectAsStateWithLifecycle()
-    FavoritesScreen(favoriteMoviesUiState = favoriteMoviesUiState.value) {
+fun FavoritesRoute() {
+  val movieDetailViewModel: FavoriteMoviesViewModel = viewModel(
+    factory = FavoriteMoviesViewModel.Factory
+  )
+
+  val favoriteMoviesUiState by movieDetailViewModel.favoriteMoviesUiState.collectAsStateWithLifecycle()
+
+  FavoritesScreen(
+    favoriteMoviesUiState = favoriteMoviesUiState,
+    onMovieClick = { movieId ->
 
     }
+  )
+
 
 }
 
 @Composable
 fun FavoritesScreen(
-    favoriteMoviesUiState: FavoriteMoviesUiState,
-    onMovieClick: () -> Unit
+  favoriteMoviesUiState: FavoriteMoviesUiState,
+  onMovieClick: (Int) -> Unit
 ) {
-    if (favoriteMoviesUiState.moviesList.isNotEmpty()) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            items(favoriteMoviesUiState.moviesList) {
-                MovieCard(it,
-                    onMovieClick = onMovieClick,
-                    onFavoriteClick = {
-                        //TODO ADD logic when tapping fav icon
-                    }
-                )
-            }
-        }
-    } else {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.FavoriteBorder,
-                tint = Color.Gray,
-                contentDescription = "No favorite items icon",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(300.dp)
-                    .padding(8.dp)
-            )
-            Text(
-                text = "Sin favoritos",
-                textAlign = TextAlign.Center,
-                fontSize = 24.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
+  if (favoriteMoviesUiState.favoriteMovies.isNotEmpty()) {
+    LazyVerticalGrid(
+      columns = GridCells.Fixed(2),
+      modifier = Modifier.fillMaxSize(),
+    ) {
+      items(favoriteMoviesUiState.favoriteMovies) { movie ->
+        MovieCard(
+          movie,
+          onMovieClick = { movieId ->
+            onMovieClick(movieId)
+          },
+          onFavoriteClick = { movie, isMovieInFavorites ->
+          },
+          isMovieFavorite = false
+        )
+      }
     }
+  } else {
+    Column(
+      modifier = Modifier.fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
+    ) {
+      Icon(
+        imageVector = Icons.Default.FavoriteBorder,
+        tint = Color.Gray,
+        contentDescription = "No favorite items icon",
+        modifier = Modifier
+          .fillMaxWidth()
+          .size(300.dp)
+          .padding(8.dp)
+      )
+      Text(
+        text = "Sin favoritos",
+        textAlign = TextAlign.Center,
+        fontSize = 24.sp,
+        modifier = Modifier
+          .fillMaxWidth()
+      )
+    }
+  }
 }
