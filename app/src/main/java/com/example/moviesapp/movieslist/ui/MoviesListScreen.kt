@@ -70,7 +70,7 @@ fun MoviesListScreen(
     else -> {
 
       LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(200.dp),
+        columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 5.dp,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         content = {

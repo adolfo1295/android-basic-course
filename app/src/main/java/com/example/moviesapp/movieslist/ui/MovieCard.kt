@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -31,11 +30,10 @@ import com.example.moviesapp.models.detail.MovieDetailModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieCard(
-    modifier: Modifier = Modifier,
     movie: MovieDetailModel,
     onMovieClick: (Int) -> Unit,
     onFavoriteClick: (movie: MovieDetailModel, isMovieInFavorites: Boolean) -> Unit,
-    isMovieFavorite: Boolean ,
+    isMovieFavorite: Boolean,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     Card(
@@ -43,8 +41,6 @@ fun MovieCard(
         onClick = {
             onMovieClick(movie.id)
         },
-        modifier = modifier
-            .padding(8.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize()

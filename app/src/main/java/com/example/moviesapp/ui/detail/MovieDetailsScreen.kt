@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -97,7 +98,6 @@ fun MovieDetailsScreen(
         Box(
           modifier = Modifier
             .padding(horizontal = 10.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
             .fillMaxWidth()
             .fillMaxHeight(0.5f)
             .align(Alignment.BottomCenter),
@@ -114,14 +114,18 @@ fun MovieDetailsScreen(
                 updateFavorites(movie, isMovieFavorite)
               }
             )
-            Spacer(modifier = Modifier.height(5.dp))
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Column(
+              modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
               Text(
                 text = "Descripcion",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
               )
               Spacer(modifier = Modifier.height(8.dp))
               Text(
