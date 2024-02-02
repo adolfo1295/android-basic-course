@@ -11,10 +11,23 @@ import com.example.moviesapp.navigation.Screens
 import com.example.moviesapp.ui.detail.MovieDetailsRoute
 
 @Composable
-fun HomeNavHost() {
-
+fun HomeNavHost(
+  updateBottomVisibility: (showBottom: Boolean) -> Unit
+) {
   val navController = rememberNavController()
+
   NavHost(navController = navController, startDestination = Screens.Home.route) {
+
+    navController.addOnDestinationChangedListener { nav, dest, _ ->
+
+      if (dest.route?.contains(Screens.Details.route) == true) {
+        updateBottomVisibility(false)
+      } else {
+        updateBottomVisibility(true)
+      }
+    }
+
+
     composable(Screens.Home.route) {
       MoviesListRoute(onMovieClick = {
         navController.navigate(Screens.Details.route + it)
@@ -24,7 +37,6 @@ fun HomeNavHost() {
       route = "${Screens.Details.route}{movieId}",
       arguments = listOf(navArgument("movieId") { type = NavType.StringType })
     ) {
-
       val movieId = it.arguments?.getString("movieId")
       MovieDetailsRoute(movieId = movieId.orEmpty(), onPopUp = {
         navController.popBackStack()

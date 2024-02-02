@@ -57,7 +57,7 @@ fun MovieDetailsHeader(
     IconButton(
       modifier = Modifier
         .align(Alignment.TopEnd)
-        .offset(x = -(25.dp), y = -(20.dp))
+        .offset(x = -(5.dp), y = -(20.dp))
         .clip(CircleShape)
         .zIndex(1f),
       colors = IconButtonDefaults.iconButtonColors(

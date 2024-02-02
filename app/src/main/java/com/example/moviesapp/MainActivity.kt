@@ -3,6 +3,7 @@ package com.example.moviesapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,9 +18,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -69,13 +72,19 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
 
+        val bottomVisibilityState = rememberSaveable {
+          mutableStateOf(true)
+        }
+
         Scaffold(
           bottomBar = {
-            BottomBar(
-              navController = navController,
-              itemsList = itemsList,
-              navBackStackEntry = navBackStackEntry,
-            )
+            AnimatedVisibility(visible = bottomVisibilityState.value) {
+              BottomBar(
+                navController = navController,
+                itemsList = itemsList,
+                navBackStackEntry = navBackStackEntry,
+              )
+            }
           }
         ) { paddingValues ->
           NavHost(
@@ -85,11 +94,19 @@ class MainActivity : ComponentActivity() {
           ) {
             composable(Screens.Home.route) {
               Box(modifier = Modifier.fillMaxSize()) {
-                HomeNavHost()
+                HomeNavHost(
+                  updateBottomVisibility = {
+                    bottomVisibilityState.value = it
+                  }
+                )
               }
             }
             composable(Screens.Favorites.route) {
-              FavoritesNavHost()
+              FavoritesNavHost(
+                updateBottomVisibility = {
+                  bottomVisibilityState.value = it
+                }
+              )
             }
             composable(Screens.NowPlaying.route) {
               NowPlayingNavHost()
@@ -101,10 +118,8 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-  MoviesAppTheme {
-
-  }
+fun currentRoute(navController: NavHostController): String? {
+  val navBackStackEntry by navController.currentBackStackEntryAsState()
+  return navBackStackEntry?.destination?.route
 }

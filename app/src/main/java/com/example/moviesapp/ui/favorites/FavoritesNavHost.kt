@@ -11,9 +11,20 @@ import com.example.moviesapp.navigation.Screens
 import com.example.moviesapp.ui.detail.MovieDetailsRoute
 
 @Composable
-fun FavoritesNavHost() {
+fun FavoritesNavHost(
+  updateBottomVisibility: (showBottom: Boolean) -> Unit
+) {
   val favoritesNavController = rememberNavController()
   NavHost(navController = favoritesNavController, startDestination = Screens.Favorites.route) {
+
+    favoritesNavController.addOnDestinationChangedListener { nav, dest, _ ->
+      if (dest.route?.contains(Screens.Details.route) == true) {
+        updateBottomVisibility(false)
+      } else {
+        updateBottomVisibility(true)
+      }
+    }
+
     composable(route = Screens.Favorites.route) {
       FavoritesRoute() {
         favoritesNavController.navigate(Screens.Details.route + it)
