@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -30,52 +31,56 @@ import com.example.moviesapp.models.detail.MovieDetailModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieCard(
-  movie: MovieDetailModel,
-  onMovieClick: (Int) -> Unit,
-  onFavoriteClick: (movie: MovieDetailModel, isMovieInFavorites: Boolean) -> Unit,
-  isMovieFavorite: Boolean
+    modifier: Modifier = Modifier,
+    movie: MovieDetailModel,
+    onMovieClick: (Int) -> Unit,
+    onFavoriteClick: (movie: MovieDetailModel, isMovieInFavorites: Boolean) -> Unit,
+    isMovieFavorite: Boolean ,
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
-  Card(
-    elevation = CardDefaults.cardElevation(2.dp),
-    onClick = {
-      onMovieClick(movie.id)
-    }
-  ) {
-    Box(
-      modifier = Modifier.fillMaxSize()
+    Card(
+        elevation = CardDefaults.cardElevation(2.dp),
+        onClick = {
+            onMovieClick(movie.id)
+        },
+        modifier = modifier
+            .padding(8.dp)
     ) {
-      Column(
-        modifier = Modifier.fillMaxSize()
-      ) {
-        SubcomposeAsyncImage(
-          model = ImageRequest.Builder(LocalContext.current)
-            .data(MovieDbApi.IMAGE_URL_HOME + movie.imageUrl)
-            .crossfade(true)
-            .build(),
-          loading = {
-            CircularProgressIndicator()
-          },
-          contentScale = ContentScale.Crop,
-          contentDescription = null,
-          modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-        )
-      }
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(MovieDbApi.IMAGE_URL_HOME + movie.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    contentScale = contentScale ,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                )
+            }
 
-      Icon(
-        imageVector = if (isMovieFavorite) Icons.Filled.Favorite
-        else Icons.Default.FavoriteBorder,
-        contentDescription = "No favorite items icon",
-        modifier = Modifier
-          .size(50.dp)
-          .padding(8.dp)
-          .align(Alignment.TopEnd)
-          .clickable {
-            onFavoriteClick(movie, isMovieFavorite)
-          }
-      )
+            Icon(
+                imageVector = if (isMovieFavorite) Icons.Filled.Favorite
+                else Icons.Default.FavoriteBorder,
+                contentDescription = "No favorite items icon",
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(8.dp)
+                    .align(Alignment.TopEnd)
+                    .clickable {
+                        onFavoriteClick(movie, isMovieFavorite)
+                    }
+            )
+        }
+
     }
-
-  }
 }

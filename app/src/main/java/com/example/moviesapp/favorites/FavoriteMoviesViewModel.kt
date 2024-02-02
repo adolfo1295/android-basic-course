@@ -41,6 +41,12 @@ class FavoriteMoviesViewModel(
     }
   }
 
+  fun removeFavoriteMovie(movie: MovieDetailModel){
+    viewModelScope.launch {
+      moviesRepository.removeMovieFromFavorites(movie)
+    }
+  }
+
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {
