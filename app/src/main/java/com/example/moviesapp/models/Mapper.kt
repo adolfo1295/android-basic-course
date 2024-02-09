@@ -85,7 +85,7 @@ fun MovieDetailModel.toMovieEntity(): MovieEntity {
     releaseDate = this.releaseDate,
     popularity = this.popularity,
     overview = this.overview,
-    isFavorite = false,
+    isFavorite = true,
     budget = this.budget,
     posterPath = this.posterPath,
     backdropPath = this.backdropPath

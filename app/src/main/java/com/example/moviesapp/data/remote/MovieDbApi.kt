@@ -22,6 +22,13 @@ interface MovieDbApi {
         @Query("language") language: String = "es-ES",
     ): MovieDetailResponse
 
+    @GET("3/movie/now_playing")
+    suspend fun getNowPlayingMovies(
+        @Query("api_key") apiKey: String = "b6c84267a24780c397d359579bb6ad19",
+        @Query("language") language: String = "es-ES",
+        @Query("page") page: Int = 1,
+    ): MovieResultResponse
+
     companion object {
         const val IMAGE_URL_THUMBNAIL = "https://image.tmdb.org/t/p/w300/"
         const val IMAGE_URL_HOME = "https://image.tmdb.org/t/p/w400/"

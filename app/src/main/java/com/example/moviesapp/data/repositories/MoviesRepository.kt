@@ -21,6 +21,10 @@ class MoviesRepository(
     return movieDbApi.getMovieDetail(movieId = movieId)
   }
 
+  suspend fun getNowPlayingMovies(): List<MovieResponse> {
+    return movieDbApi.getNowPlayingMovies().results
+  }
+
   suspend fun insertMovieToFavorites(movieModel: MovieDetailModel) {
     dao.insertMovieToFavorites(movieEntity = movieModel.toMovieEntity())
   }

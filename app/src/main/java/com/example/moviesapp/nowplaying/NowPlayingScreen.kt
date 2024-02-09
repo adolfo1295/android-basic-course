@@ -1,4 +1,4 @@
-package com.example.moviesapp.movieslist.ui
+package com.example.moviesapp.nowplaying
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,23 +13,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moviesapp.models.detail.MovieDetailModel
+import com.example.moviesapp.movieslist.ui.MovieCard
+import com.example.moviesapp.movieslist.ui.MovieError
+import com.example.moviesapp.movieslist.ui.MoviesUiState
 
 @Composable
-fun MoviesListRoute(
+fun NowPlayingRoute(
     onMovieClick: (Int) -> Unit,
-    viewModel: MoviesListViewModel = viewModel(
-        factory = MoviesListViewModel.Factory
+    viewModel: NowPlayingViewModel = viewModel(
+        factory = NowPlayingViewModel.Factory
     )
 ) {
 
     val moviesUiState by viewModel.moviesListUiState.collectAsStateWithLifecycle()
 
-    MoviesListScreen(
+    NowPlayingScreen(
         moviesUiState = moviesUiState,
         onMovieClick = onMovieClick,
         onFavoriteClick = { movie, isMovieInFavorites ->
@@ -43,7 +45,7 @@ fun MoviesListRoute(
 }
 
 @Composable
-fun MoviesListScreen(
+fun NowPlayingScreen(
     moviesUiState: MoviesUiState,
     onMovieClick: (Int) -> Unit,
     onFavoriteClick: (movie: MovieDetailModel, isMovieInFavorites: Boolean) -> Unit,
@@ -78,10 +80,9 @@ fun MoviesListScreen(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 content = {
                     items(moviesUiState.moviesList) { movieModel ->
-
                         val isMovieFavorites = moviesUiState.favoriteMovies.firstOrNull {
-                                it.id == movieModel.id
-                            }?.isFavorite ?: false
+                            it.id == movieModel.id
+                        }?.isFavorite ?: false
 
                         MovieCard(
                             movie = movieModel,
@@ -101,17 +102,5 @@ fun MoviesListScreen(
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun MoviesListScreenPreview() {
-    MoviesListScreen(
-        MoviesUiState(),
-        onMovieClick = {},
-        onFavoriteClick = { movie: MovieDetailModel, isMovieInFavorites: Boolean ->
-        },
-        onRefreshClick = {}
-    )
 }
 
