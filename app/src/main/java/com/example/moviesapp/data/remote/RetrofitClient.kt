@@ -13,10 +13,14 @@ class RetrofitClient {
             .add(KotlinJsonAdapterFactory())
             .build()
 
+        val movieApiKeyInterceptor = MovieApiKeyInterceptor()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.themoviedb.org/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(OkHttpClient.Builder().build())
+            .client(OkHttpClient.Builder()
+                .addInterceptor(movieApiKeyInterceptor)
+                .build())
             .build()
 
         val service = retrofit.create(MovieDbApi::class.java)
